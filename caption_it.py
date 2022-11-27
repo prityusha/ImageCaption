@@ -18,8 +18,6 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import Model
-from tensorflow.keras.utils import to_categorical, plot_model
-from tensorflow.keras.layers import Input, Dense, LSTM, Embedding, Dropout, add
 from tensorflow.keras.models import load_model
 
 def idx_to_word(integer, tokenizer):
@@ -78,33 +76,8 @@ def pre_run_this_code(photo):
   # tokenize the text
   tokenizer = Tokenizer()
   tokenizer.fit_on_texts(all_captions)
-  vocab_size = len(tokenizer.word_index) + 1
 
   max_length = max(len(caption.split()) for caption in all_captions)
-
-  image_ids = list(mapping.keys())
-  split = int(len(image_ids) * 0.90)
-  train = image_ids[:split]
-  test = image_ids[split:]
-
-
-  inputs1 = Input(shape=(4096,))
-  fe1 = Dropout(0.4)(inputs1)
-  fe2 = Dense(256, activation='relu')(fe1)
-  # sequence feature layers
-  inputs2 = Input(shape=(max_length,))
-  se1 = Embedding(vocab_size, 256, mask_zero=True)(inputs2)
-  se2 = Dropout(0.4)(se1)
-  se3 = LSTM(256)(se2)
-
-  # decoder model
-  decoder1 = add([fe2, se3])
-  decoder2 = Dense(256, activation='relu')(decoder1)
-  outputs = Dense(vocab_size, activation='softmax')(decoder2)
-
-  model = Model(inputs=[inputs1, inputs2], outputs=outputs)
-  model.compile(loss='categorical_crossentropy', optimizer='adam')
-
   model = load_model('best_model.h5')
   description = predict_caption(model, photo, tokenizer, max_length)
 
@@ -156,16 +129,12 @@ def extract_features(filename):
 	return feature
 
 def show_caption(image_url):
-  
-  #!wget -O img1.jpg https://firebasestorage.googleapis.com/v0/b/imagecaption-f60dd.appspot.com/o/pictures%2FJPEG_20221120_151238_6669102990747990536.jpg?alt=media&token=86592fbf-e2df-4914-82c7-83f2f686b8c6
-  
   img_data = requests.get(image_url).content
   with open('img1.jpg', 'wb') as handler:
       handler.write(img_data)
-  #!wget -O img1.jpg image_link
+
   photo = extract_features('img1.jpg')
   # generate description
-  
   description = pre_run_this_code(photo)
 
   query = description
