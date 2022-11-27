@@ -4,5 +4,5 @@ requests
 Pillow
 jupyter
 tqdm
-tensorflow
+tensorflow-cpu
 gunicorn
