@@ -1,6 +1,6 @@
 flask
 numpy
-request
+requests
 Pillow
 tqdm
 tensorflow
