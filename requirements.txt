@@ -2,6 +2,7 @@ flask
 numpy
 requests
 Pillow
+jupyter
 tqdm
 tensorflow
 gunicorn
